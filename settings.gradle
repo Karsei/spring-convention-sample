@@ -1,0 +1,5 @@
+rootProject.name = 'spring-convention'
+include ':demo',
+        ':spring-convention',
+        ':spring-convention-jakarta',
+        ':core'

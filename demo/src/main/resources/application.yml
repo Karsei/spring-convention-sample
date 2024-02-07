@@ -1,0 +1,12 @@
+server:
+  port: 80
+  tomcat:
+    relaxed-query-chars: "[,]"
+convention:
+  rest:
+    enabled: true
+  swagger:
+    enabled: true
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
