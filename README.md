@@ -126,7 +126,6 @@ public class SomeRequest {
 * `filter[user_id][like]=leejy`
 * `page[offset]=2`
 * `page[limit]=5`
-* `page[unlimit]=true`
 * `sort[some_field]=asc`
 * `sort[0][some_field]=asc`
 

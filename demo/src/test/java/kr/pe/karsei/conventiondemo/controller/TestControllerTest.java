@@ -100,7 +100,6 @@ class TestControllerTest {
     @Test
     void testIfRetrievingPaginationItemsWithUnlimitIsSuccessful() throws Exception {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/pagination")
-                        .param("page[unlimit]", "true")
                         .param("page[offset]", "2")
                         .param("page[limit]", "30")
                 )
@@ -113,9 +112,9 @@ class TestControllerTest {
                 () -> Assertions.assertThat(result.getData()).isNotNull(),
                 () -> Assertions.assertThat(result.getMeta()).isNotNull(),
                 () -> Assertions.assertThat(result.getMeta().getPage()).isNotNull(),
-                () -> Assertions.assertThat(result.getMeta().getPage().getTotal()).isEqualTo(1),
-                () -> Assertions.assertThat(result.getMeta().getPage().getLimit()).isGreaterThanOrEqualTo(2000),
-                () -> Assertions.assertThat(result.getMeta().getPage().getOffset()).isEqualTo(0)
+                () -> Assertions.assertThat(result.getMeta().getPage().getTotal()).isEqualTo(2 * 30 + 1),
+                () -> Assertions.assertThat(result.getMeta().getPage().getLimit()).isEqualTo(30),
+                () -> Assertions.assertThat(result.getMeta().getPage().getOffset()).isEqualTo(2 * 30)
         );
         result.getData().forEach(data -> assertAll(
                 () -> Assertions.assertThat(data).isNotNull(),
@@ -141,6 +140,62 @@ class TestControllerTest {
                 () -> Assertions.assertThat(result.getMeta().getPage().getTotal()).isGreaterThanOrEqualTo(0),
                 () -> Assertions.assertThat(result.getMeta().getPage().getLimit()).isGreaterThanOrEqualTo(0),
                 () -> Assertions.assertThat(result.getMeta().getPage().getOffset()).isGreaterThanOrEqualTo(0)
+        );
+        result.getData().forEach(data -> assertAll(
+                () -> Assertions.assertThat(data).isNotNull(),
+                () -> Assertions.assertThat(data.getObjVal()).isNotNull(),
+                () -> Assertions.assertThat(data.getObjListVal()).isNotNull(),
+                () -> Assertions.assertThat(data.getLongVal()).isNotNull(),
+                () -> Assertions.assertThat(data.getStrVal()).isNotBlank()
+        ));
+    }
+
+    @Test
+    void testIfRetrievingPaginationItemsWithMaxSizeIsSuccessful() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/pagination-max-size")
+                        .param("page[offset]", "0")
+                        .param("page[limit]", "5000")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        PageableApiResponse<TestDto> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+
+        assertAll(
+                () -> Assertions.assertThat(result).isNotNull(),
+                () -> Assertions.assertThat(result.getData()).isNotNull(),
+                () -> Assertions.assertThat(result.getMeta()).isNotNull(),
+                () -> Assertions.assertThat(result.getMeta().getPage()).isNotNull(),
+                () -> Assertions.assertThat(result.getMeta().getPage().getTotal()).isEqualTo(1),
+                () -> Assertions.assertThat(result.getMeta().getPage().getLimit()).isEqualTo(1000),
+                () -> Assertions.assertThat(result.getMeta().getPage().getOffset()).isEqualTo(0)
+        );
+        result.getData().forEach(data -> assertAll(
+                () -> Assertions.assertThat(data).isNotNull(),
+                () -> Assertions.assertThat(data.getObjVal()).isNotNull(),
+                () -> Assertions.assertThat(data.getObjListVal()).isNotNull(),
+                () -> Assertions.assertThat(data.getLongVal()).isNotNull(),
+                () -> Assertions.assertThat(data.getStrVal()).isNotBlank()
+        ));
+    }
+
+    @Test
+    void testIfRetrievingPaginationItemsWithMaxSizeLegacyIsSuccessful() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/pagination-max-size-legacy")
+                        .param("page", "0")
+                        .param("size", "5000")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        PageableApiResponse<TestDto> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+
+        assertAll(
+                () -> Assertions.assertThat(result).isNotNull(),
+                () -> Assertions.assertThat(result.getData()).isNotNull(),
+                () -> Assertions.assertThat(result.getMeta()).isNotNull(),
+                () -> Assertions.assertThat(result.getMeta().getPage()).isNotNull(),
+                () -> Assertions.assertThat(result.getMeta().getPage().getTotal()).isEqualTo(1),
+                () -> Assertions.assertThat(result.getMeta().getPage().getLimit()).isEqualTo(1000),
+                () -> Assertions.assertThat(result.getMeta().getPage().getOffset()).isEqualTo(0)
         );
         result.getData().forEach(data -> assertAll(
                 () -> Assertions.assertThat(data).isNotNull(),

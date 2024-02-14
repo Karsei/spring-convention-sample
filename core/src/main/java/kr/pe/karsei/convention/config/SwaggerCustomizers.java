@@ -4,8 +4,6 @@ import kr.pe.karsei.convention.dto.rest.FilterOperator;
 import kr.pe.karsei.convention.dto.rest.swagger.ConventionFilter;
 import com.google.common.base.CaseFormat;
 import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.SpecVersion;
-import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -57,9 +55,6 @@ public class SwaggerCustomizers {
                         .filter(methodParameter -> methodParameter.hasParameterAnnotation(ConventionFilter.class))
                         .findAny();
                 if (filter.isPresent()) {
-                    // unlimit 추가
-                    addPageUnlimitParameter(operation);
-
                     // 파라미터 이름, 설명 변환
                     operation.getParameters().forEach(parameter -> {
                         if (parameter.getName().equals(webProperties.getPageable().getPageParameter())) {
@@ -76,21 +71,5 @@ public class SwaggerCustomizers {
             }
         }
         return operation;
-    }
-
-    private static void addPageUnlimitParameter(Operation operation) {
-        Schema<Integer> schema = new Schema<>(SpecVersion.V30);
-        schema.setType("boolean");
-        schema.setExampleSetFlag(false);
-        schema.types(new LinkedHashSet<>() {{ add("boolean"); }});
-        Parameter unlimited = new Parameter();
-        unlimited.setRequired(false);
-        unlimited.setIn("query");
-        unlimited.setSchema(schema);
-        unlimited.setName("page[unlimit]");
-        unlimited.setDescription("전체 리스트를 조회할지 여부. true 로 설정하면 offset 과 limit 은 무시됩니다.");
-        unlimited.setExample("false");
-
-        operation.setParameters(new ArrayList<>(operation.getParameters()) {{ add(unlimited); }});
     }
 }

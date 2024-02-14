@@ -39,25 +39,15 @@ public class FilterWebParameterResolver {
                 if (matcher.matches()) {
                     String name;
 
-                    boolean unlimitedKey = compatibleServletRequest.getParameterMap().containsKey("page[unlimit]");
-
                     final String paramName = matcher.group(1);
                     switch (paramName) {
                         case "limit" -> {
-                            if (unlimitedKey && compatibleServletRequest.getParameterValues("page[unlimit]")[0].equals("true")) continue;
                             name = webProperties.getPageable().getSizeParameter(); // "size"
                             parameters.put(name, compatibleServletRequest.getParameterValues(param));
                         }
                         case "offset" -> {
-                            if (unlimitedKey && compatibleServletRequest.getParameterValues("page[unlimit]")[0].equals("true")) continue;
                             name = webProperties.getPageable().getPageParameter(); // "page"
                             parameters.put(name, compatibleServletRequest.getParameterValues(param));
-                        }
-                        case "unlimit" -> {
-                            if (compatibleServletRequest.getParameterValues(param)[0].equals("true")) {
-                                parameters.put(webProperties.getPageable().getPageParameter(), new String[]{webProperties.getPageable().isOneIndexedParameters() ? "1" : "0"});
-                                parameters.put(webProperties.getPageable().getSizeParameter(), new String[]{String.valueOf(webProperties.getPageable().getMaxPageSize())});
-                            }
                         }
                     }
                 }

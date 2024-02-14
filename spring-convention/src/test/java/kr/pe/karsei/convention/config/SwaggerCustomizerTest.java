@@ -122,11 +122,10 @@ class SwaggerCustomizerTest {
 
         // result
         assertThat(customized).isNotNull();
-        assertThat(customized.getParameters()).hasSize(4);
+        assertThat(customized.getParameters()).hasSize(3);
         assertThat(customized.getParameters()).anyMatch(parameter -> parameter.getName().equals("page[offset]"));
         assertThat(customized.getParameters()).anyMatch(parameter -> parameter.getName().equals("page[limit]"));
         assertThat(customized.getParameters()).anyMatch(parameter -> parameter.getName().equals("sort"));
-        assertThat(customized.getParameters()).anyMatch(parameter -> parameter.getName().equals("page[unlimit]"));
     }
 
     @Test

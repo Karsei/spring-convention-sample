@@ -2,6 +2,7 @@ package kr.pe.karsei.conventiondemo.controller;
 
 import kr.pe.karsei.convention.dto.rest.CollectApiResponse;
 import kr.pe.karsei.convention.dto.rest.EntryApiResponse;
+import kr.pe.karsei.convention.dto.rest.LimitedPageSize;
 import kr.pe.karsei.convention.dto.rest.PageableApiResponse;
 import kr.pe.karsei.convention.dto.rest.swagger.ConventionFilter;
 import kr.pe.karsei.conventiondemo.dto.ErrorDto;
@@ -14,6 +15,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +75,34 @@ public class TestController {
     @GetMapping("pagination-legacy")
     public PageableApiResponse<TestDto> paginationLegacyTest(@ParameterObject TestDto.TestLegacyRequest request,
                                                              @ParameterObject Pageable pageable) {
+        List<TestDto> obj = List.of(TEST_OBJ);
+        Page<TestDto> page = new PageImpl<>(obj, pageable, obj.size());
+        return PageableApiResponse.of(page);
+    }
+
+    @Operation(summary = "페이지 조회 최대 페이지 사이즈 응답 API", description = """
+            최대 페이지 사이즈를 지정했을 때 페이지 조회 예시입니다.
+            
+            `size` 를 아무리 크게 하더라도 현재 endpoint 에서 지정된 1000으로 고정됩니다.
+            """)
+    @GetMapping("pagination-max-size")
+    public PageableApiResponse<TestDto> paginationMaxSizeTest(
+            @ParameterObject @PageableDefault(size = 15) @ConventionFilter @LimitedPageSize(maxSize = 1000) Pageable pageable) {
+        List<TestDto> obj = List.of(TEST_OBJ);
+        Page<TestDto> page = new PageImpl<>(obj, pageable, obj.size());
+        return PageableApiResponse.of(page);
+    }
+
+    @Operation(summary = "페이지 조회 최대 페이지 사이즈 응답 API (기존 API 호환)", description = """
+            최대 페이지 사이즈를 지정했을 때 페이지 조회 예시입니다.
+            
+            `size` 를 아무리 크게 하더라도 현재 endpoint 에서 지정된 1000으로 고정됩니다.
+            
+            기존 API 에서 영향을 받는지, 호환성을 확인하기 위한 용도입니다.
+            """)
+    @GetMapping("pagination-max-size-legacy")
+    public PageableApiResponse<TestDto> paginationMaxSizeLegacyTest(
+            @ParameterObject @PageableDefault(size = 15) @LimitedPageSize(maxSize = 1000) Pageable pageable) {
         List<TestDto> obj = List.of(TEST_OBJ);
         Page<TestDto> page = new PageImpl<>(obj, pageable, obj.size());
         return PageableApiResponse.of(page);
