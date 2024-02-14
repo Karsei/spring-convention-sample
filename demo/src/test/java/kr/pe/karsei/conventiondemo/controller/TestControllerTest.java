@@ -3,12 +3,8 @@ package kr.pe.karsei.conventiondemo.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.pe.karsei.convention.config.ConventionWebMvcConfigResolver;
-import kr.pe.karsei.convention.dto.rest.CollectApiResponse;
-import kr.pe.karsei.convention.dto.rest.EntryApiResponse;
-import kr.pe.karsei.convention.dto.rest.PageableApiResponse;
+import kr.pe.karsei.convention.dto.rest.*;
 import kr.pe.karsei.conventiondemo.dto.ErrorDto;
-import kr.pe.karsei.conventiondemo.dto.ErrorListResponse;
-import kr.pe.karsei.conventiondemo.dto.ErrorResponse;
 import kr.pe.karsei.conventiondemo.dto.TestDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -211,12 +207,12 @@ class TestControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/error"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ErrorResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        MandatoryErrorApiResponse result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
 
         assertAll(
                 () -> Assertions.assertThat(result).isNotNull(),
-                () -> Assertions.assertThat(result.getErrorCode()).isNotNull(),
-                () -> Assertions.assertThat(result.getErrorMessage()).isNotBlank()
+                () -> Assertions.assertThat(result.getError().getCode()).isNotNull(),
+                () -> Assertions.assertThat(result.getError().getMessage()).isNotBlank()
         );
     }
 
@@ -225,16 +221,16 @@ class TestControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/error-list"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ErrorListResponse<ErrorDto> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
+        DetailErrorApiResponse<ErrorDto> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
 
         assertAll(
                 () -> Assertions.assertThat(result).isNotNull(),
-                () -> Assertions.assertThat(result.getErrorCode()).isNotNull(),
-                () -> Assertions.assertThat(result.getErrorMessage()).isNotBlank(),
-                () -> Assertions.assertThat(result.getErrorList()).isNotNull(),
-                () -> Assertions.assertThat(result.getErrorList()).isNotEmpty(),
-                () -> Assertions.assertThat(result.getErrorList().get(0).getName()).isNotEmpty(),
-                () -> Assertions.assertThat(result.getErrorList().get(0).getArguments()).isNotEmpty()
+                () -> Assertions.assertThat(result.getError().getCode()).isNotNull(),
+                () -> Assertions.assertThat(result.getError().getMessage()).isNotBlank(),
+                () -> Assertions.assertThat(result.getError().getDetails()).isNotNull(),
+                () -> Assertions.assertThat(result.getError().getDetails()).isNotEmpty(),
+                () -> Assertions.assertThat(result.getError().getDetails().get(0).getName()).isNotEmpty(),
+                () -> Assertions.assertThat(result.getError().getDetails().get(0).getArguments()).isNotEmpty()
         );
     }
 }
