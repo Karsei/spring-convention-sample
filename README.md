@@ -92,10 +92,14 @@ public PageableApiResponse<SomeResult> findItems(SomeRequest request,
 
 ## 오류 포맷 지원
 
-아래 2개의 인터페이스를 지원합니다.
+주로 사용될 만한 2가지 형식의 기본 클래스를 사용할 수 있습니다.
+
+* `MandatoryErrorApiResponse` - 오류 코드, 메시지만 제공
+* `DetailErrorApiResponse` - 오류 코드, 메시지, 상세 제공
+
+아래 1개의 인터페이스를 지원합니다.
 
 * `ErrorApiResponse`
-* `AdditionalErrorApiResponse`
 
 ## QueryString 에서 snake_case 지원
 
@@ -204,3 +208,23 @@ public class SomeDto {
     private String blah;
 }
 ```
+
+### 최대 페이지 사이즈
+
+Spring Web 에서는 최대 페이지 사이즈를 지정하도록 property 를 자체적으로 제공하고 있습니다. 최대 페이지 사이즈를 넘어선 요청이 들어올 경우, 설정에서 지정된 최대 사이즈로 고정됩니다.
+
+전역으로 적용할 경우 아래와 같이 설정할 수 있습니다.
+
+```properties
+# 최대 페이지 사이즈 지정 (기본값: 2000)
+spring.data.web.pageable.max-page-size=2000
+```
+
+전역이 아닌 일부 요청에만 적용하고 싶을 경우 `@LimitedPageSize` 를 파라미터에 작성하여 아래와 같이 설정하고 이용할 수 있습니다.
+
+```java
+public PageableApiResponse<TestDto> paginationMaxSizeTest(
+        @ParameterObject @PageableDefault(size = 15) @LimitedPageSize(maxSize = 1000) Pageable pageable) {
+```
+
+> 위에 작성된 모든 사항은 필터 형식(`page[limit]`)도 지원됩니다.
