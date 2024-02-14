@@ -77,16 +77,9 @@ public class FilterWebParameterResolver {
                     sortParam.put(paramIdx, String.format("%s,%s", paramName, value));
                 }
             }
-            // SNAKE_CASE 대응
+            // 기존 파라미터 대응
             else {
-                // 기존 파라미터 호환
-                if (!param.contains("_")) {
-                    parameters.put(param, compatibleServletRequest.getParameterValues(param));
-                    continue;
-                }
-
-                final String camelCaseParam = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, param);
-                parameters.put(camelCaseParam, compatibleServletRequest.getParameterValues(param));
+                parameters.put(param, compatibleServletRequest.getParameterValues(param));
             }
         }
 

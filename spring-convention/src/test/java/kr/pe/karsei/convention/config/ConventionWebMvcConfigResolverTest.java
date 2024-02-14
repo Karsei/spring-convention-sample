@@ -46,23 +46,6 @@ class ConventionWebMvcConfigResolverTest {
     }
 
     @Test
-    void snakeCaseTest() throws ServletException, IOException {
-        OncePerRequestFilter filter = new ConventionWebMvcConfigResolver().snakeCaseConverterFilter(this.webProperties);
-        this.request.addParameter("user_id", "leejy");
-
-        filter.doFilter(this.request, this.response, this.chain);
-        assertAll(
-                () -> assertThat(this.chain.getRequest().getParameterMap()).isNotNull(),
-                () -> assertThat(this.chain.getRequest().getParameterMap().keySet().size()).isEqualTo(1),
-                () -> assertThat(this.chain.getRequest().getParameterMap().get("userId")).isNotNull(),
-                () -> assertThat(this.chain.getRequest().getParameterMap().get("userId")).isNotEmpty(),
-                () -> assertThat(this.chain.getRequest().getParameterMap().get("userId").length).isEqualTo(1),
-                () -> assertThat(this.chain.getRequest().getParameterMap().get("userId")[0]).isEqualTo("leejy"),
-                () -> assertThat(this.chain.getRequest().getParameterMap().get("user_id")).isNull()
-        );
-    }
-
-    @Test
     void pageOriginTest() throws ServletException, IOException {
         OncePerRequestFilter filter = new ConventionWebMvcConfigResolver().snakeCaseConverterFilter(this.webProperties);
         this.request.addParameter("page", "99");

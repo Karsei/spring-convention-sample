@@ -101,29 +101,6 @@ public PageableApiResponse<SomeResult> findItems(SomeRequest request,
 
 * `ErrorApiResponse`
 
-## QueryString 에서 snake_case 지원
-
-아래와 같은 GET Endpoint 가 있을 경우, 객체에 값 삽입 시 snake_case 이어도 값을 받아들이도록 합니다.
-
-`http://localhost?user_id=leejy&userId=leejy`
-
-> 기존 애플리케이션의 호환을 위해 snake_case, lowerCamelCase **둘 다 지원**합니다.
-
-```java
-@GetMapping
-@ResponseStatus(HttpStatus.OK)
-public EntryApiResponse<SomeResult> findItem(SomeRequest request)
-```
-
-```java
-@Getter
-@Setter
-public class SomeRequest {
-    private String userId;
-    private String domain;
-}
-```
-
 ## filter 형식 지원
 
 * `filter[domain]=google.com`
